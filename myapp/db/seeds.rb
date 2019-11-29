@@ -19,3 +19,5 @@ user3 = User.create(name: 'name3', account: 'account3', password: 'pass', role: 
   user3.tasks.create(name: "#{user3.name}-done#{index}", status: 'done')
   Label.create(name: "label-#{index}")
 end
+
+Config.create(name: 'maintenance', enabled: 0)

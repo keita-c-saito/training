@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.feature 'User management', type: :feature do
+  let!(:maintenance_config) { create(:maintenance_config) }
   let!(:admin_user) { create(:admin_user, account: 'tadashi.toyokura', password: 'password') }
 
   before do

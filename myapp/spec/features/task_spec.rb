@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.feature 'Task', type: :feature do
+  let!(:maintenance_config) { create(:maintenance_config) }
   let!(:user) { create(:user) }
   let!(:labels) do
     2.times do |index|

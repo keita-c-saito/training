@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.feature 'Authentication', type: :feature do
+  let!(:maintenance_config) { create(:maintenance_config) }
   let(:user) { create(:user, account: 'account', password: 'password') }
 
   feature 'signup' do

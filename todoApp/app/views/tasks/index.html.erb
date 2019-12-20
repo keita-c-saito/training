@@ -7,6 +7,7 @@
   <tr>
     <th><%= t('tasks.column.title') %></th>
     <th><%= t('tasks.column.description') %></th>
+    <th><%= t('created_at') %></th>
     <th colspan="3"></th>
   </tr>
   </thead>
@@ -16,6 +17,7 @@
     <tr>
       <td><%= task.title %></td>
       <td><%= task.description %></td>
+      <td><%= l(task.created_at, format: :short) %></td>
       <td><%= link_to t('show'), task %></td>
       <td><%= link_to t('edit'), edit_task_path(task) %></td>
       <td><%= link_to t('destroy'), task, method: :delete, data: { confirm: t('flash_message.delete_confirm') } %></td>

@@ -3,6 +3,7 @@ en:
   edit: 'Edit'
   destroy: 'Destroy'
   back: 'Back'
+  created_at: 'Created At'
 
   tasks:
     new_task: 'New Task'

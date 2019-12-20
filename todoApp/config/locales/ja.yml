@@ -3,6 +3,7 @@ ja:
   edit: '修正'
   destroy: '削除'
   back: '戻る'
+  created_at: '作成日時'
 
   tasks:
     new_task: '新タスク'

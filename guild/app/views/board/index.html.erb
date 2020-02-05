@@ -1,16 +1,47 @@
+<body>
 <!-- Fixed navbar -->
+<header>
 <nav class="navbar navbar-default navbar-top">
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" data-turbolinks="false">Guild</a>
     </div>
-    <div id="navbar" class="collapse navbar-collapse" style="padding-top:8px; padding-left:100px;">
-        <button type="button" class="btn btn-success" id='create-button' data-toggle="modal" onClick="javascript:openAddingeModalWindow();">Create</button>
+    <div id="navbar" class="form-inline collapse navbar-collapse" style="padding-top:8px; padding-left:100px;">
+      <button type="button" class="btn btn-success" id='create-button' data-toggle="modal" onClick="javascript:openAddingeModalWindow();">Create</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="button" style="float: right;" id="sign-out">Sign out</button>
+      <form></form>
     </div><!--/.nav-collapse -->
   </div>
 </nav>
+</header>
 <div class="container">
   <div id="alert-complete" class="alert alert-success" role="alert" hidden></div>
+  <div id="alert-error" class="alert alert-danger" role="alert" hidden></div>
+  <form class="form-inline">
+    <div class="form-group">
+      <div class="form-group" style="padding:10px;">
+        <label for="exampleFormControlSelect1">Label: </label>
+        <select class="form-control" id="condition-label" required>
+          <option></option>
+          <% @view_params['label_list'].each do | k, v |%>
+          <option value="<%= k %>"><%= v %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group" style="padding:10px;">
+        <label for="exampleFormControlSelect1">State: </label>
+        <select class="form-control" id="condition-state" required>
+          <option></option>
+          <% @view_params['state_list'].each do | k, v |%>
+          <option value="<%= k %>"><%= v %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group" style="padding:10px;">
+        <button type="button" class="btn btn-primary" id="search-task" hidden>Search</button>
+      </div>
+    </div>
+  </form>
   <table class="table">
     <thead>
       <tr>
@@ -31,3 +62,4 @@
 <%= render :partial => "common/modal_window" %>
 <script src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
 <%= javascript_include_tag 'board' %>
+</body>

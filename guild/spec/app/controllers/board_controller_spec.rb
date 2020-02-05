@@ -3,6 +3,15 @@ require 'logic_board'
 
 describe BoardController, type: :request do
   let!(:task_a) { create(:task1) }
+  let!(:task_b) {
+    create(:task1,
+      id: 2,
+      subject: 'test subject 2nd',
+      description: 'test description 2nd',
+      state: 2,
+      label: 2
+    )
+  }
   describe '#index' do
     context 'Not during maintenance' do
       it 'Displayed correctly' do
@@ -34,14 +43,28 @@ describe BoardController, type: :request do
   end
 
   describe '#get_task_all' do
-    it 'Displayed correctly' do
-      get '/board/api/task/all'
-      expect(response).to have_http_status "200"
-      response_params = JSON.parse(response.body)
-      expect(response_params['response']['task_list'].count).to_not eq 0
-      task = response_params['response']['task_list'][0]
-      expect(task['id']).to eq task_a.id
-      expect(task['user_id']).to eq task_a.user_id
+    context 'Condition used' do
+      it 'Displayed correctly' do
+        query_string = "?conditions%5Blabel%5D=#{task_b.label}&conditions%5Bstate%5D=#{task_b.state}";
+        get '/board/api/task/all' + query_string
+        expect(response).to have_http_status "200"
+        response_params = JSON.parse(response.body)
+        expect(response_params['response']['task_list'].count).to_not eq 0
+        task = response_params['response']['task_list'][0]
+        expect(task['id']).to eq task_b.id
+        expect(task['user_id']).to eq task_b.user_id
+      end
+    end
+    context 'Condition not used' do
+      it 'Displayed correctly' do
+        get '/board/api/task/all'
+        expect(response).to have_http_status "200"
+        response_params = JSON.parse(response.body)
+        expect(response_params['response']['task_list'].count).to_not eq 0
+        task = response_params['response']['task_list'][0]
+        expect(task['id']).to eq task_a.id
+        expect(task['user_id']).to eq task_a.user_id
+      end
     end
   end
 

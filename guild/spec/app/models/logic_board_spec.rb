@@ -39,7 +39,7 @@ describe LogicBoard , type: :model do
   describe '#index' do
     context 'Valid user' do
       it 'Task is found' do
-        result = LogicBoard.index(user_id)
+        result = described_class.index(user_id)
         expect(result['task_list'].count).to eq 3
         expect(result['task_list'][0].id).to eq task_new.id
         result['task_list'].each do | task |
@@ -53,7 +53,7 @@ describe LogicBoard , type: :model do
     end
     context 'Invalid user' do
       it 'Task is not found' do
-        result = LogicBoard.index(ng_user_id)
+        result = described_class.index(ng_user_id)
         expect(result['task_list'].empty?).to eq true
       end
     end
@@ -62,7 +62,7 @@ describe LogicBoard , type: :model do
   describe '#get_task_all' do
     context 'Valid user' do
       it 'Task is found' do
-        result = LogicBoard.get_task_all(user_id)
+        result = described_class.get_task_all(user_id)
         expect(result['task_list'].count).to eq 3
         expect(result['task_list'][0].id).to eq task_new.id
         result['task_list'].each do | task |
@@ -73,7 +73,7 @@ describe LogicBoard , type: :model do
     end
     context 'Invalid user' do
       it 'Task is not found' do
-        result = LogicBoard.get_task_all(ng_user_id)
+        result = described_class.get_task_all(ng_user_id)
         expect(result['task_list'].empty?).to eq true
       end
     end
@@ -82,7 +82,7 @@ describe LogicBoard , type: :model do
   describe '#get_task_by_id' do
     context 'Valid user' do
       it 'Task is found' do
-        result = LogicBoard.get_task_by_id(user_id, task_a.id)
+        result = described_class.get_task_by_id(user_id, task_a.id)
         expect(result['task']).to be_an_instance_of(Task)
         expect(result['task'].id).to eq task_a.id
         expect(result['task'].user_id).to eq task_a.user_id
@@ -91,27 +91,55 @@ describe LogicBoard , type: :model do
     context 'Invalid user' do
       it 'Target task is not found' do
         ng_task_id = 999999
-        result = LogicBoard.get_task_by_id(user_id, ng_task_id)
+        result = described_class.get_task_by_id(user_id, ng_task_id)
         expect(result['task']).to be_nil
+      end
+    end
+  end
+
+  describe '#get_task_by_search_conditions' do
+    context 'Valid user' do
+      it 'Valid codition' do
+        conditions = {'label' => task_a.label.to_s, 'state' => task_a.state.to_s}
+        result = described_class.get_task_by_search_conditions(user_id, conditions)
+        expect(result['task_list'].count).to eq 1
+        expect(result['task_list'][0]).to eq task_a
+      end
+      it 'Invalid codition' do
+        conditions = {'label' => task_a.label.to_s, 'state' => task_b.state.to_s}
+        result = described_class.get_task_by_search_conditions(user_id, conditions)
+        expect(result['task_list'].empty?).to eq true
+      end
+    end
+    context 'Invalid user' do
+      it 'Valid codition' do
+        conditions = {'label' => task_a.label.to_s, 'state' => task_a.state.to_s}
+        result = described_class.get_task_by_search_conditions(ng_user_id, conditions)
+        expect(result['task_list'].empty?).to eq true
+      end
+      it 'Invalid codition' do
+        conditions = {'label' => task_a.label.to_s, 'state' => task_b.state.to_s}
+        result = described_class.get_task_by_search_conditions(ng_user_id, conditions)
+        expect(result['task_list'].empty?).to eq true
       end
     end
   end
 
   describe '#get_state_list' do
     it 'Respond correctly' do
-      expect(LogicBoard.get_state_list).to eq expected[:state]
+      expect(described_class.get_state_list).to eq expected[:state]
     end
   end
 
   describe '#get_priority_list' do
     it 'Respond correctly' do
-      expect(LogicBoard.get_priority_list).to eq expected[:priority]
+      expect(described_class.get_priority_list).to eq expected[:priority]
     end
   end
 
   describe '#get_label_list' do
     it 'Respond correctly' do
-      expect(LogicBoard.get_label_list).to eq expected[:label]
+      expect(described_class.get_label_list).to eq expected[:label]
     end
   end
 
@@ -126,11 +154,11 @@ describe LogicBoard , type: :model do
     }
 
     it 'Create correctly' do
-      result = LogicBoard.create(user_id, params)
+      result = described_class.create(user_id, params)
       expect(result.nil?).to be false
       created_task_id = result
 
-      result = LogicBoard.get_task_by_id(user_id, created_task_id)
+      result = described_class.get_task_by_id(user_id, created_task_id)
       expect(result['task'].nil?).to be false
       expect(result['task']).to be_an_instance_of(Task)
       expect(result['task'].user_id).to eq user_id
@@ -152,10 +180,10 @@ describe LogicBoard , type: :model do
         'priority'    => 3,
       }
 
-      result = LogicBoard.update(user_id, params_for_update)
+      result = described_class.update(user_id, params_for_update)
       expect(result).to be true
 
-      result = LogicBoard.get_task_by_id(user_id, task_a.id)
+      result = described_class.get_task_by_id(user_id, task_a.id)
       expect(result['task'].nil?).to be false
       expect(result['task']).to be_an_instance_of(Task)
       expect(result['task'].user_id).to eq user_id
@@ -175,21 +203,21 @@ describe LogicBoard , type: :model do
         'priority'    => 3,
       }
 
-      result = LogicBoard.update(user_id, params_for_update)
+      result = described_class.update(user_id, params_for_update)
       expect(result).to be false
     end
   end
 
   describe '#delete' do
     it 'Delete correctly' do
-      LogicBoard.delete(user_id, task_a.id)
-      result = LogicBoard.get_task_by_id(user_id, task_a.id)
+      described_class.delete(user_id, task_a.id)
+      result = described_class.get_task_by_id(user_id, task_a.id)
       expect(result['task']).to be_nil
     end
 
     it 'Target task is not found' do
       not_exsits_task_id = 9999999
-      result = LogicBoard.delete(user_id, not_exsits_task_id)
+      result = described_class.delete(user_id, not_exsits_task_id)
       expect(result).to be false
     end
   end

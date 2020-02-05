@@ -8,19 +8,25 @@ class BoardController < ApplicationController
   end
 
   def get_task_all
-    render :json => {
-      'response' => LogicBoard.get_task_all(@@user_id)
-    }
+    if params['conditions'].blank?
+      render json: {
+        'response' => LogicBoard.get_task_all(@@user_id)
+      }
+    else
+      render json: {
+        'response' => LogicBoard.get_task_by_search_conditions(@@user_id, params['conditions'])
+      }
+    end
   end
 
   def get_task_by_id
-    render :json => {
+    render json: {
       'response' => LogicBoard.get_task_by_id(@@user_id, params['id'])
     }
   end
 
   def get_master
-    render :json => {
+    render json: {
       'response' => {
         'state'    => LogicBoard.get_state_list,
         'priority' => LogicBoard.get_priority_list,
@@ -30,19 +36,19 @@ class BoardController < ApplicationController
   end
 
   def create
-    render :json => {
+    render json: {
       'result' => LogicBoard.create(@@user_id, params)
     }
   end
 
   def update
-    render :json => {
+    render json: {
       'result' => LogicBoard.update(@@user_id, params)
     }
   end
 
   def delete
-    render :json => {
+    render json: {
       'result' => LogicBoard.delete(@@user_id, params['id'])
     }
   end

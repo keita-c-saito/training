@@ -1,5 +1,6 @@
 class LogicBoard
-  require 'task'
+  LIMIT = 10
+ # require 'task'
   require 'value_objects/state'
   require 'value_objects/priority'
   require 'value_objects/label'
@@ -13,11 +14,21 @@ class LogicBoard
   end
 
   def self.get_task_all(user_id)
-    {'task_list' => Task.where(user_id: user_id).order(created_at: "DESC")}
+    {
+      'task_list' => Task.where(user_id: user_id).order(created_at: "DESC")
+    }
   end
 
   def self.get_task_by_id(user_id, id)
-    {'task' => Task.find_by_id(id)}
+    {
+      'task' => Task.find_by_id(id)
+    }
+  end
+
+  def self.get_task_by_search_conditions(user_id, conditions)
+    {
+      'task_list' => Task.where(getConditionString(user_id, conditions)).order(created_at: "DESC")
+    }
   end
 
   def self.get_state_list
@@ -61,4 +72,14 @@ class LogicBoard
     return false if task.nil? || task.user_id != user_id
     return task.delete
   end
+
+  def self.getConditionString(user_id, conditions)
+      conditionsStr = "user_id = #{user_id}"
+      conditions.each do |column, value|
+        unless value.empty?
+          conditionsStr = conditionsStr + " AND #{column} = #{value}"
+        end
+      end
+      conditionsStr
+    end
 end

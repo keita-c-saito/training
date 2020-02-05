@@ -1,12 +1,18 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
 'use strict';
 let taskDetail;
 let taskList;
 let master;
+let conditions = {};
 
 window.addEventListener('DOMContentLoaded', function() {
   prepare();
+
+  document.getElementById("search-task").onclick = function() {
+    conditions["label"] = $("#condition-label").val();
+    conditions["state"] = $("#condition-state").val();
+    getLatestTaskList()
+  }
+
   document.getElementById("change-input").onclick = function() {
     resetModal()
     $("#state-form-group").show();
@@ -109,37 +115,42 @@ const getLatestTaskList = () => {
   $.ajax({
     url: '/board/api/task/all',
     type: 'get',
+    data: {conditions: conditions},
     success: function(data) {
       console.log(data)
       taskList = data.response.task_list
-      const elTaskList = $("#task-list-doby");
-      elTaskList.empty();
-      taskList.forEach(function(task,index,ar){
-        var elTr = $("<tr></tr>");
-        if (task.priority == 1) {
-          var priorityColor = 'info';
-        } else if(task.priority == 2) {
-          var priorityColor = 'warning';
-        } else if(task.priority == 3) {
-          var priorityColor = 'danger';
-        }
-        elTr.append('<th scope="row" ><a id="id-link" href="javascript:openInfoModalWindow(' + task.id + ');">' + task.id + '</a></td>');
-        elTr.append("<td>" + task.user_id + "</td>");
-        elTr.append("<td>" + master.label[task.label] + "</td>");
-        var elTdSubject = $("<td></td>");
-        elTdSubject.text(task.subject);
-        elTr.append(elTdSubject);
-        elTr.append('<td><p class="text-' + priorityColor + '">' + master.priority[task.priority] + '</p></td>');
-        elTr.append("<td>" + master.state[task.state] + "</td>");
-        elTr.append("<td>" + task.created_at + "</td>");
-        elTr.append("<td>" + task.updated_at + "</td>");
-        elTr.append('<td><button type="button" id="button-delete" class="btn btn-danger" onClick="javascript:openDeleteModalWindow(' + task.id + ');">Delete</button></td>');
-        elTaskList.append(elTr);
-      });
+      createTaskListElements()
     },
     error: function(data) {
       console.log(data)
     }
+  });
+}
+
+const createTaskListElements = () => {
+  const elTaskList = $("#task-list-doby");
+  elTaskList.empty();
+  taskList.forEach(function(task,index,ar){
+    var elTr = $("<tr></tr>");
+    if (task.priority == 1) {
+      var priorityColor = 'info';
+    } else if(task.priority == 2) {
+      var priorityColor = 'warning';
+    } else if(task.priority == 3) {
+      var priorityColor = 'danger';
+    }
+    elTr.append('<th scope="row" ><a id="id-link" href="javascript:openInfoModalWindow(' + task.id + ');">' + task.id + '</a></td>');
+    elTr.append("<td>" + task.user_id + "</td>");
+    elTr.append("<td>" + master.label[task.label] + "</td>");
+    var elTdSubject = $("<td></td>");
+    elTdSubject.text(task.subject);
+    elTr.append(elTdSubject);
+    elTr.append('<td><p class="text-' + priorityColor + '">' + master.priority[task.priority] + '</p></td>');
+    elTr.append("<td>" + master.state[task.state] + "</td>");
+    elTr.append("<td>" + task.created_at + "</td>");
+    elTr.append("<td>" + task.updated_at + "</td>");
+    elTr.append('<td><button type="button" id="button-delete" class="btn btn-danger" onClick="javascript:openDeleteModalWindow(' + task.id + ');">Delete</button></td>');
+    elTaskList.append(elTr);
   });
 }
 

@@ -1,6 +1,4 @@
 class LogicBoard
-  LIMIT = 10
- # require 'task'
   require 'value_objects/state'
   require 'value_objects/priority'
   require 'value_objects/label'

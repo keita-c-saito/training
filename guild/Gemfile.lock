@@ -88,6 +88,18 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.6)
+    kaminari (1.2.0)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.0)
+      kaminari-activerecord (= 1.2.0)
+      kaminari-core (= 1.2.0)
+    kaminari-actionview (1.2.0)
+      actionview
+      kaminari-core (= 1.2.0)
+    kaminari-activerecord (1.2.0)
+      activerecord
+      kaminari-core (= 1.2.0)
+    kaminari-core (1.2.0)
     less (2.6.0)
       commonjs (~> 0.2.7)
     libv8 (3.16.14.19)
@@ -227,6 +239,7 @@ DEPENDENCIES
   database_rewinder
   factory_bot_rails
   jquery-rails
+  kaminari
   less-rails!
   mysql2 (= 0.4.10)
   puma

@@ -103,12 +103,16 @@ describe LogicBoard , type: :model do
         conditions = {'label' => task_a.label.to_s, 'state' => task_a.state.to_s}
         result = described_class.get_task_by_search_conditions(user_id, conditions)
         expect(result['task_list'].count).to eq 1
+        expect(result['limit']).to eq described_class::LIMIT
+        expect(result['total']).to eq 1
         expect(result['task_list'][0]).to eq task_a
       end
       it 'Invalid codition' do
         conditions = {'label' => task_a.label.to_s, 'state' => task_b.state.to_s}
         result = described_class.get_task_by_search_conditions(user_id, conditions)
         expect(result['task_list'].empty?).to eq true
+        expect(result['limit']).to eq described_class::LIMIT
+        expect(result['total']).to eq 0
       end
     end
     context 'Invalid user' do
@@ -116,11 +120,15 @@ describe LogicBoard , type: :model do
         conditions = {'label' => task_a.label.to_s, 'state' => task_a.state.to_s}
         result = described_class.get_task_by_search_conditions(ng_user_id, conditions)
         expect(result['task_list'].empty?).to eq true
+        expect(result['limit']).to eq described_class::LIMIT
+        expect(result['total']).to eq 0
       end
       it 'Invalid codition' do
         conditions = {'label' => task_a.label.to_s, 'state' => task_b.state.to_s}
         result = described_class.get_task_by_search_conditions(ng_user_id, conditions)
         expect(result['task_list'].empty?).to eq true
+        expect(result['limit']).to eq described_class::LIMIT
+        expect(result['total']).to eq 0
       end
     end
   end

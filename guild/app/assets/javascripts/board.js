@@ -3,6 +3,7 @@ let taskDetail;
 let taskList;
 let master;
 let conditions = {};
+let pagenation = new Pagenation();
 
 window.addEventListener('DOMContentLoaded', function() {
   prepare();
@@ -10,7 +11,7 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById("search-task").onclick = function() {
     conditions["label"] = $("#condition-label").val();
     conditions["state"] = $("#condition-state").val();
-    getLatestTaskList()
+    getLatestTaskList(true)
   }
 
   document.getElementById("change-input").onclick = function() {
@@ -67,7 +68,7 @@ window.addEventListener('DOMContentLoaded', function() {
       success: function(data) {
         console.log(data)
         $.LoadingOverlay("show");
-        getLatestTaskList()
+        getLatestTaskList(true)
         $('#modal-window').modal('hide')
         $.LoadingOverlay("hide");
         viewCompleteMessage('deleting task complete');
@@ -97,9 +98,9 @@ window.addEventListener('DOMContentLoaded', function() {
         label: label,
       },
       success: function(data) {
-        console.log(data)
+        console.log(data.result)
         $.LoadingOverlay("show");
-        getLatestTaskList()
+        getLatestTaskList(true)
         $('#modal-window').modal('hide')
         $.LoadingOverlay("hide");
         viewCompleteMessage('adding task complete');
@@ -111,7 +112,7 @@ window.addEventListener('DOMContentLoaded', function() {
   };
 });
 
-const getLatestTaskList = () => {
+const getLatestTaskList = (reset = false) => {
   $.ajax({
     url: '/board/api/task/all',
     type: 'get',
@@ -120,11 +121,24 @@ const getLatestTaskList = () => {
       console.log(data)
       taskList = data.response.task_list
       createTaskListElements()
+      pagenation.init({
+        total:  data.response.total,
+        limit:  data.response.limit,
+        apiUrl: '/board/api/task/all',
+        callback: pagenationCallback,
+        queryParams: {conditions: conditions},
+      }, reset);
     },
     error: function(data) {
       console.log(data)
     }
   });
+}
+
+const pagenationCallback = data => {
+  console.log(data)
+  taskList = data.response.task_list
+  createTaskListElements()
 }
 
 const createTaskListElements = () => {
@@ -161,7 +175,7 @@ const prepare = () => {
     success: function(data) {
       console.log(data)
       master = data.response;
-      getLatestTaskList();
+      getLatestTaskList(true);
     },
     error: function(data) {
       console.log(data)
